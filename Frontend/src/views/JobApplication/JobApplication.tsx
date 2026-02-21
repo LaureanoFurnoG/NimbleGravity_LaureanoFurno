@@ -18,23 +18,27 @@ type JobOffer ={
 const JobApplication = () =>{
     const [Candidate, setCandidateInformation] = useState<CandidateResponse>()
     const [Offers, setJobOffers] = useState<JobOffer[]>()
-    const [notification, setNotification] = useState({ type: 0, message: "" })
+    const [notification, setNotification] = useState({ type: 0, message: "", id: 0 })
     const [loading, setLoading] = useState<boolean>(false)
     const handleSubmit = (e: BaseSyntheticEvent) => {
         e.preventDefault();
         getCandidateInformation(e.target.elements.email.value)
     };
+    
+    const randomID = () =>{
+        return Math.floor(Math.random() * (2000 - 0 + 1)) + 0
+    }
 
     const getCandidateInformation = async (email: string) =>{
         try{
             setLoading(true)
             const response = await instanceAxios.get(`/api/candidate/get-by-email?email=${email}`)
             setCandidateInformation(response.data)
-            setNotification({ type: response.status, message: response.statusText});
+            setNotification({ type: response.status, message: response.statusText, id: randomID()});
             setLoading(false)
         }catch(err: any){
             setLoading(false)
-            setNotification({ type: err.status, message: err.message });
+            setNotification({ type: err.status, message: err.message, id: randomID() });
         }
     }
 
@@ -44,15 +48,15 @@ const JobApplication = () =>{
                 const response = await instanceAxios.get(`/api/jobs/get-list`)
                 setJobOffers(response.data)
             }catch(err: any){
-                setNotification({ type: err.status, message: err.message });
+                setNotification({ type: err.status, message: err.message, id: randomID() });
             }
         }
         getListJobs()
     },[])
-    
+
     return(
         <>
-            <Notification Type={notification.type} Message={notification.message} />
+            <Notification Type={notification.type} Message={notification.message} Id={notification.id} />
             <section className="flex w-full items-center justify-center flex-col mt-20">
                 <div className="flex justify-center w-[100%] sm:w-[100%] md:w-[80%] lg:w-[60%] p-5">
                     <form className="flex gap-5 flex-col sm:flex-row w-full" onSubmit={handleSubmit}>
@@ -62,7 +66,7 @@ const JobApplication = () =>{
                 </div>
                 <div className="w-[100%] sm:w-[100%] md:w-[80%] lg:w-[60%] p-5 flex flex-col gap-3 overflow-auto h-[60vh] scrollbar">
                     {Offers?.map((offer) =>(
-                        <JobCard key={offer.id} IdJob={offer.id} TitlePosition={offer.title}/>
+                        <JobCard key={offer.id} IdJob={offer.id} TitlePosition={offer.title} CandidateInformation={Candidate}/>
                     ))}
                 </div>
             </section>
