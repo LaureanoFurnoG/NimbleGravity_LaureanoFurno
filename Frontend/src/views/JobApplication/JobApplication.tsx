@@ -10,8 +10,13 @@ type CandidateResponse = {
     lastName: string
     uuid: string
 }
+type JobOffer ={
+    id: string
+    title: string
+}
 const JobApplication = () =>{
-   const [Candidate, setCandidateInformation] = useState<CandidateResponse>()
+    const [Candidate, setCandidateInformation] = useState<CandidateResponse>()
+    const [Offers, setJobOffers] = useState<JobOffer[]>()
 
     const handleSubmit = (e: BaseSyntheticEvent) => {
         e.preventDefault();
@@ -31,6 +36,8 @@ const JobApplication = () =>{
         const getListJobs = async () =>{
             try{
                 const response = await instanceAxios.get(`/api/jobs/get-list`)
+                console.log(response)
+                setJobOffers(response.data)
             }catch(err: any){
                 console.log(err)
             }
@@ -47,8 +54,10 @@ const JobApplication = () =>{
                         <button type="submit" className="bg-[#5cb35c] p-3 rounded text-white w-25 hover:bg-[#386538] w-full sm:w-50 cursor-pointer transition-all duration-300">Enter</button>
                     </form>
                 </div>
-                <div className="w-[100%] sm:w-[100%] md:w-[80%] lg:w-[60%] p-5 flex flex-col gap-3 overflow-auto h-80">
-                    <JobCard TitlePosition={"Test"}/>
+                <div className="w-[100%] sm:w-[100%] md:w-[80%] lg:w-[60%] p-5 flex flex-col gap-3 overflow-auto h-[60vh]">
+                    {Offers?.map((offer) =>(
+                        <JobCard key={offer.id} IdJob={offer.id} TitlePosition={offer.title}/>
+                    ))}
                 </div>
             </section>
         </>
