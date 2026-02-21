@@ -3,12 +3,13 @@ import { useEffect } from 'react';
 
 type ComponentProps ={
     Type: number
-    Message: string
+    Message?: string
+    Id?: number
 }
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
-const Notification = ({Type, Message}: ComponentProps) =>{
+const Notification = ({Type, Message, Id}: ComponentProps) =>{
     const [api, contextHolder] = notification.useNotification();
     
     const openNotification = (Type: number, Message: string) => {
@@ -40,9 +41,9 @@ const Notification = ({Type, Message}: ComponentProps) =>{
         
     useEffect(() => {
         if (Message) {
-            openNotification(Type, Message);
+            openNotification(Type, Message,);
         }
-    });
+    }, [Id]);
     return(
         <>
             {contextHolder}
